@@ -1,3 +1,4 @@
+import CameraView from "./CameraView.jsx";
 import { Link } from "react-router-dom";
 
 export function Home() {
@@ -27,7 +28,20 @@ const Page = ({ title, text }) => (
 );
 
 export const Lessons = () => <Page title="Lessons" text="Alphabet, numbers and common words will appear here." />;
-export const Practice = () => <Page title="Practice" text="The camera and hand detection will go here." />;
+export function Practice() {
+  return (
+    <>
+      <h1>Practice 📷</h1>
+      <p className="muted">Hold your hand in front of the camera.</p>
+      <CameraView />
+      <div className="card">
+        <p className="muted">
+          Tip: use good lighting and a plain background. Keep your whole hand inside the frame.
+        </p>
+      </div>
+    </>
+  );
+}
 export const Games = () => <Page title="Games" text="Sign Rush and mini games will go here." />;
 export const Progress = () => <Page title="Progress" text="Your streaks, XP and accuracy will show here." />;
 export const Settings = () => <Page title="Settings" text="Deaf, blind and speech-impaired modes will go here." />
