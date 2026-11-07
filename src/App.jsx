@@ -1,6 +1,7 @@
 import { NavLink, Route, Routes } from "react-router-dom";
 import { Home, Lessons, Practice, Games, Progress, Settings } from "./screens.jsx";
 import "./App.css";
+import Record from "./Record.jsx";
 
 const tabs = [
   ["/", "🏠", "Home"],
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/games" element={<Games />} />
           <Route path="/progress" element={<Progress />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/record" element={<Record />} />
         </Routes>
       </main>
       <nav className="nav" aria-label="Main navigation">
