@@ -1,19 +1,26 @@
+import { useState } from "react";
 import { NavLink, Route, Routes } from "react-router-dom";
 import { Home, Lessons, Practice, Progress, Settings } from "./screens.jsx";
 import Games from "./Games.jsx";
-import "./App.css";
 import Record from "./Record.jsx";
+import Welcome, { isOnboarded } from "./Welcome.jsx";
+import { HomeIcon, BookIcon, CameraIcon, GameIcon, ChartIcon, GearIcon } from "./icons.jsx";
+import "./App.css";
 
 const tabs = [
-  ["/", "🏠", "Home"],
-  ["/lessons", "📚", "Learn"],
-  ["/practice", "📷", "Practice"],
-  ["/games", "🎮", "Games"],
-  ["/progress", "📈", "Progress"],
-  ["/settings", "⚙️", "Settings"],
+  ["/", HomeIcon, "Home"],
+  ["/lessons", BookIcon, "Learn"],
+  ["/practice", CameraIcon, "Practice"],
+  ["/games", GameIcon, "Games"],
+  ["/progress", ChartIcon, "Progress"],
+  ["/settings", GearIcon, "Settings"],
 ];
 
 export default function App() {
+  const [onboarded, setOnboarded] = useState(isOnboarded());
+
+  if (!onboarded) return <Welcome onDone={() => setOnboarded(true)} />;
+
   return (
     <>
       <main className="app">
@@ -28,10 +35,10 @@ export default function App() {
         </Routes>
       </main>
       <nav className="nav" aria-label="Main navigation">
-        {tabs.map(([to, icon, label]) => (
+        {tabs.map(([to, Icon, label]) => (
           <NavLink key={to} to={to} end={to === "/"}
             className={({ isActive }) => (isActive ? "active" : "")}>
-            <span aria-hidden="true">{icon}</span>{label}
+            <Icon />{label}
           </NavLink>
         ))}
       </nav>

@@ -99,15 +99,15 @@ export default function Games() {
 
   return (
     <>
-      <h1>Sign Rush ⚡</h1>
-      <p className="muted">Show each sign before the timer runs out. Fast signs and combos score more.</p>
+      <h1>Sign Rush</h1>
+      <p className="page-sub">Show each sign before the timer runs out. Fast signs and combos score more.</p>
       <CameraView onLandmarks={onLandmarks} />
 
       <div className="card target">
         <div className="stats">
-          <div className="stat"><b>⏱ {timeLeft}</b><span className="muted">Seconds</span></div>
+          <div className="stat"><b>{timeLeft}</b><span className="muted">Seconds</span></div>
           <div className="stat"><b>{score}</b><span className="muted">Score</span></div>
-          <div className="stat"><b>🔥 {combo}</b><span className="muted">Combo</span></div>
+          <div className="stat"><b>{combo}</b><span className="muted">Combo</span></div>
         </div>
 
         {phase === "playing" && (

@@ -35,7 +35,7 @@ export default function Record() {
 
   return (
     <>
-      <h1>Record signs 🎥</h1>
+      <h1>Record signs</h1>
       <p className="muted">
         Pick a sign, make it with the same hand every time, press Record, and slowly move
         your hand a little (closer, farther, tilted) while it captures.

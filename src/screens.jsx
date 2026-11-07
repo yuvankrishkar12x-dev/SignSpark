@@ -14,11 +14,11 @@ export function Home() {
   const p = getProgress();
   return (
     <>
-      <h1>SignSpark ✋</h1>
-      <p className="muted">Learn sign language with your camera.</p>
+      <h1>Hi there 👋</h1>
+      <p className="page-sub">Ready for today's practice?</p>
       <div className="stats">
-        <div className="stat"><b>🔥 {getStreak(p)}</b><span className="muted">Streak</span></div>
-        <div className="stat"><b>⭐ {p.xp}</b><span className="muted">XP</span></div>
+        <div className="stat"><b>{getStreak(p)}</b><span className="muted">Day streak</span></div>
+        <div className="stat"><b>{p.xp}</b><span className="muted">XP</span></div>
         <div className="stat"><b>{masteredCount(p)}</b><span className="muted">Mastered</span></div>
       </div>
       <div className="card">
@@ -35,8 +35,8 @@ export function Lessons() {
   const p = getProgress();
   return (
     <>
-      <h1>Lessons 📚</h1>
-      <p className="muted">Level 1: Basics. Tap a sign to practise it.</p>
+      <h1>Lessons</h1>
+      <p className="page-sub">Level 1: Basics. Tap a sign to practise it.</p>
       <div className="card">
         {SIGNS.map((s) => {
           const c = p.perSign[s]?.correct || 0;
@@ -47,7 +47,7 @@ export function Lessons() {
                 <b>Sign {s}</b>
                 <span className="meter"><span style={{ width: `${Math.min(100, (c / MASTERED_AT) * 100)}%` }} /></span>
               </span>
-              <span>{c >= MASTERED_AT ? "✅" : `${c}/${MASTERED_AT}`}</span>
+              <span className="lesson-count">{c >= MASTERED_AT ? "Mastered" : `${c}/${MASTERED_AT}`}</span>
             </Link>
           );
         })}
@@ -63,10 +63,10 @@ export function Progress() {
   const max = Math.max(10, ...days.map((d) => d.xp));
   return (
     <>
-      <h1>Progress 📈</h1>
+      <h1>Progress</h1>
       <div className="stats">
-        <div className="stat"><b>🔥 {getStreak(p)}</b><span className="muted">Streak</span></div>
-        <div className="stat"><b>⭐ {p.xp}</b><span className="muted">XP</span></div>
+        <div className="stat"><b>{getStreak(p)}</b><span className="muted">Day streak</span></div>
+        <div className="stat"><b>{p.xp}</b><span className="muted">XP</span></div>
         <div className="stat"><b>{masteredCount(p)}/{SIGNS.length}</b><span className="muted">Mastered</span></div>
       </div>
 
@@ -177,8 +177,8 @@ export function Practice() {
 
   return (
     <>
-      <h1>Practice 📷</h1>
-      <p className="muted">Make the sign for the letter below and hold it steady.</p>
+      <h1>Practice</h1>
+      <p className="page-sub">Make the sign for the letter below and hold it steady.</p>
       <CameraView onLandmarks={onLandmarks} />
 
       <div className="card target">
@@ -196,7 +196,8 @@ export function Practice() {
         </div>
       </div>
 
-      <div className="card debug muted">
+      <details className="card debug muted">
+        <summary>Tuning (for the team)</summary>
         <div>
           Closest sign: <b>{info.best ? info.best.label : "–"}</b>
           {info.best ? ` (${info.best.d.toFixed(2)})` : ""} · Distance to {target}:{" "}
@@ -207,7 +208,7 @@ export function Practice() {
           <input type="range" min="0.5" max="4" step="0.1" value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))} />
         </label>
-      </div>
+      </details>
     </>
   );
 }
@@ -226,8 +227,8 @@ export function Settings() {
 
   return (
     <>
-      <h1>Settings ⚙️</h1>
-      <p className="muted">Choose how SignSpark talks to you.</p>
+      <h1>Settings</h1>
+      <p className="page-sub">Choose how SignSpark guides you.</p>
 
       <div role="radiogroup" aria-label="Accessibility mode">
         {MODES.map((m) => (
