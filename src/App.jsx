@@ -1,5 +1,6 @@
 import { NavLink, Route, Routes } from "react-router-dom";
-import { Home, Lessons, Practice, Games, Progress, Settings } from "./screens.jsx";
+import { Home, Lessons, Practice, Progress, Settings } from "./screens.jsx";
+import Games from "./Games.jsx";
 import "./App.css";
 import Record from "./Record.jsx";
 

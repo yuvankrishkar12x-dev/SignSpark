@@ -68,3 +68,75 @@ h2 { font-size: 1.2rem; margin: 20px 0 10px; }
   background: #000a; color: var(--muted); font-size: .85rem; font-weight: 600;
 }
 .camera-badge.on { background: var(--accent); color: #04130e; }
+/* ---------- Practice ---------- */
+.target { text-align: center; }
+.target .letter { font-size: 5rem; font-weight: 800; color: var(--accent); line-height: 1; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; justify-content: center; }
+.chip {
+  padding: 10px 16px; min-height: 44px; border-radius: 999px; border: 0;
+  background: var(--card2); color: var(--text); font-weight: 700; cursor: pointer;
+}
+.chip.active { outline: 2px solid var(--accent2); }
+.chip.done { background: var(--accent); color: #04130e; }
+.bar { height: 10px; border-radius: 999px; background: var(--card2); overflow: hidden; margin-top: 14px; }
+.bar > div { height: 100%; background: var(--accent); transition: width .1s; }
+.result { margin-top: 12px; font-weight: 700; min-height: 1.5em; }
+.result.ok { color: var(--accent); }
+.debug { font-size: .85rem; line-height: 1.6; }
+.debug input[type="range"] { width: 100%; margin-top: 6px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* ---------- Settings / accessibility ---------- */
+.mode {
+  display: flex; gap: 14px; align-items: center; width: 100%; text-align: left;
+  background: var(--card); color: var(--text); border: 2px solid transparent;
+  border-radius: var(--radius); padding: 16px; margin-top: 12px; min-height: 64px;
+  font-size: 1rem; cursor: pointer;
+}
+.mode.active { border-color: var(--accent); background: var(--card2); }
+.mode-icon { font-size: 2rem; }
+.card label { display: block; margin-top: 10px; }
+.card label.row { display: flex; align-items: center; gap: 10px; min-height: 44px; }
+.card input[type="range"] { width: 100%; margin-top: 8px; }
+
+:root[data-contrast="high"] {
+  --bg: #000; --card: #000; --card2: #111; --text: #fff; --muted: #e0e0e0; --accent: #ffe600;
+}
+:root[data-contrast="high"] .card, :root[data-contrast="high"] .mode { border: 2px solid #fff; }
+
+body::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0; z-index: 50;
+}
+body.flash-ok::after { background: #00e0a4; animation: flash .6s ease-out; }
+body.flash-bad::after { background: #ff5d7a; animation: flash .6s ease-out; }
+@keyframes flash { 0% { opacity: .45; } 100% { opacity: 0; } }
+
+/* ---------- Lessons / progress ---------- */
+.lesson-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 4px; min-height: 56px;
+  color: var(--text); text-decoration: none; border-bottom: 1px solid #ffffff12;
+}
+.lesson-row:last-child { border-bottom: 0; }
+.lesson-letter {
+  width: 44px; height: 44px; border-radius: 14px; background: var(--card2);
+  display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--accent);
+}
+.grow { flex: 1; }
+.meter { display: block; height: 8px; border-radius: 999px; background: var(--card2); margin-top: 6px; overflow: hidden; }
+.meter > span { display: block; height: 100%; background: var(--accent); }
+
+.bars { display: flex; gap: 8px; align-items: flex-end; height: 140px; }
+.bar-col { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; font-size: .75rem; }
+.bar-fill { width: 100%; background: var(--accent2); border-radius: 8px 8px 4px 4px; }
+
+.badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.badge {
+  background: var(--card2); border-radius: 16px; padding: 12px 6px; text-align: center;
+  opacity: .35; filter: grayscale(1);
+}
+.badge span { display: block; font-size: 1.8rem; }
+.badge.got { opacity: 1; filter: none; outline: 2px solid var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, body::after { animation: none !important; transition: none !important; }
+}

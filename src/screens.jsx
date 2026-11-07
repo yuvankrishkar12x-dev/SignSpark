@@ -1,53 +1,115 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import CameraView from "./CameraView.jsx";
 import { SIGNS, normalize, loadTemplates, distanceTo, recognise } from "./recognition.js";
 import {
   MODES, getMode, setMode, getTextSize, getContrast,
   setTextSize, setContrast, notify, speak,
 } from "./settings.js";
+import {
+  getProgress, getStreak, masteredCount, lastDays, getBadges, recordCorrect, MASTERED_AT,
+} from "./progress.js";
 
 export function Home() {
+  const p = getProgress();
   return (
     <>
       <h1>SignSpark ✋</h1>
       <p className="muted">Learn sign language with your camera.</p>
       <div className="stats">
-        <div className="stat"><b>🔥 0</b><span className="muted">Streak</span></div>
-        <div className="stat"><b>⭐ 0</b><span className="muted">XP</span></div>
-        <div className="stat"><b>0</b><span className="muted">Signs</span></div>
+        <div className="stat"><b>🔥 {getStreak(p)}</b><span className="muted">Streak</span></div>
+        <div className="stat"><b>⭐ {p.xp}</b><span className="muted">XP</span></div>
+        <div className="stat"><b>{masteredCount(p)}</b><span className="muted">Mastered</span></div>
       </div>
       <div className="card">
         <h2 style={{ marginTop: 0 }}>Today's lesson</h2>
-        <p className="muted">Alphabet basics: A to E</p>
+        <p className="muted">Practise your signs to keep your streak alive.</p>
         <Link className="btn" to="/practice">Start practice</Link>
+        <Link className="btn secondary" to="/games">Play Sign Rush</Link>
       </div>
     </>
   );
 }
 
-const Page = ({ title, text }) => (
-  <>
-    <h1>{title}</h1>
-    <div className="card"><p className="muted">{text}</p></div>
-  </>
-);
+export function Lessons() {
+  const p = getProgress();
+  return (
+    <>
+      <h1>Lessons 📚</h1>
+      <p className="muted">Level 1: Basics. Tap a sign to practise it.</p>
+      <div className="card">
+        {SIGNS.map((s) => {
+          const c = p.perSign[s]?.correct || 0;
+          return (
+            <Link key={s} to={`/practice?sign=${s}`} className="lesson-row">
+              <span className="lesson-letter">{s}</span>
+              <span className="grow">
+                <b>Sign {s}</b>
+                <span className="meter"><span style={{ width: `${Math.min(100, (c / MASTERED_AT) * 100)}%` }} /></span>
+              </span>
+              <span>{c >= MASTERED_AT ? "✅" : `${c}/${MASTERED_AT}`}</span>
+            </Link>
+          );
+        })}
+      </div>
+      <Link className="btn" to="/practice">Practise all</Link>
+    </>
+  );
+}
 
-export const Lessons = () => <Page title="Lessons" text="Alphabet, numbers and common words will appear here." />;
-export const Games = () => <Page title="Games" text="Sign Rush and mini games will go here." />;
-export const Progress = () => <Page title="Progress" text="Your streaks, XP and accuracy will show here." />;
+export function Progress() {
+  const p = getProgress();
+  const days = lastDays(7);
+  const max = Math.max(10, ...days.map((d) => d.xp));
+  return (
+    <>
+      <h1>Progress 📈</h1>
+      <div className="stats">
+        <div className="stat"><b>🔥 {getStreak(p)}</b><span className="muted">Streak</span></div>
+        <div className="stat"><b>⭐ {p.xp}</b><span className="muted">XP</span></div>
+        <div className="stat"><b>{masteredCount(p)}/{SIGNS.length}</b><span className="muted">Mastered</span></div>
+      </div>
+
+      <div className="card">
+        <h2 style={{ marginTop: 0 }}>XP this week</h2>
+        <div className="bars">
+          {days.map((d, i) => (
+            <div key={i} className="bar-col">
+              <div className="bar-fill" style={{ height: `${Math.max(4, (d.xp / max) * 100)}%` }} />
+              <span className="muted">{d.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <h2 style={{ marginTop: 0 }}>Badges</h2>
+        <div className="badges">
+          {getBadges(p).map((b) => (
+            <div key={b.title} className={`badge ${b.got ? "got" : ""}`}>
+              <span aria-hidden="true">{b.icon}</span>
+              <small>{b.title}</small>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
 
 const HOLD_FRAMES = 10; // how long you must hold a sign (about 0.3 seconds)
 
 export function Practice() {
+  const [params] = useSearchParams();
+  const initial = SIGNS.includes(params.get("sign")) ? params.get("sign") : SIGNS[0];
   const templates = useMemo(() => loadTemplates(), []);
-  const [target, setTarget] = useState(SIGNS[0]);
+  const [target, setTarget] = useState(initial);
   const [done, setDone] = useState([]);
   const [flash, setFlash] = useState(false);
   const [threshold, setThreshold] = useState(1.5);
   const [info, setInfo] = useState({ hand: false, hold: 0, d: null, best: null, ok: false });
 
-  const targetRef = useRef(SIGNS[0]);
+  const targetRef = useRef(initial);
   const thresholdRef = useRef(1.5);
   thresholdRef.current = threshold;
   const hold = useRef(0);
@@ -56,11 +118,12 @@ export function Practice() {
   const lastHint = useRef(0);
 
   useEffect(() => {
-    if (getMode() === "blind") speak(`Practice. Show the sign for ${SIGNS[0]}.`);
+    if (getMode() === "blind") speak(`Practice. Show the sign for ${initial}.`);
   }, []);
 
   const advance = useCallback(() => {
     const t = targetRef.current;
+    recordCorrect(t);
     setDone((p) => (p.includes(t) ? p : [...p, t]));
     const next = SIGNS[(SIGNS.indexOf(t) + 1) % SIGNS.length];
     targetRef.current = next;
